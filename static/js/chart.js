@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const ctx = document.getElementById('ipcChart').getContext('2d');
+    // Fallback: Explicitly set canvas height
+    ctx.canvas.style.height = '500px';
+    ctx.canvas.style.width = '100%';
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -19,8 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: 'IPC (%)',
                 data: data,
                 borderColor: 'rgb(75, 192, 192)',
+                borderWidth: 2,
                 tension: 0.1,
-                pointRadius: 3 // Match results chart for consistent appearance
+                pointRadius: 3
             }]
         },
         options: {
@@ -34,10 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 y: {
-                    suggestedMin: -2, // Tight fit for min IPC (-0.9)
-                    suggestedMax: 12, // Tight fit for max IPC (10.8)
+                    suggestedMin: -2,
+                    suggestedMax: 12,
                     ticks: {
-                        stepSize: 2 // Consistent with results chart
+                        stepSize: 2
                     }
                 }
             },
