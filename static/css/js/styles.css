@@ -70,21 +70,31 @@ input[type="submit"]:hover,
     background-color: #2980b9;
 }
 
-.chart-container {
+.container .chart-container {
     position: relative;
-    height: 500px; /* Increased for desktop prominence */
+    height: 500px;
+    min-height: 500px; /* Fallback to prevent collapse */
     width: 100%;
     margin-bottom: 20px;
 }
 
-.chart-container canvas {
+.container .chart-container canvas {
     width: 100% !important;
     height: 100% !important;
 }
 
+#ipcChart {
+    width: 100% !important;
+    height: 500px !important; /* Explicitly enforce for historical chart */
+}
+
 @media (max-width: 768px) {
-    .chart-container {
-        height: 350px; /* Adjusted for mobile */
+    .container .chart-container {
+        height: 350px;
+        min-height: 350px;
+    }
+    #ipcChart {
+        height: 350px !important;
     }
 }
 
