@@ -72,14 +72,19 @@ input[type="submit"]:hover,
 
 .chart-container {
     position: relative;
-    height: 400px; /* Fixed height for consistency */
+    height: 500px; /* Increased for desktop prominence */
     width: 100%;
     margin-bottom: 20px;
 }
 
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 @media (max-width: 768px) {
     .chart-container {
-        height: 300px; /* Slightly smaller on mobile */
+        height: 350px; /* Adjusted for mobile */
     }
 }
 
