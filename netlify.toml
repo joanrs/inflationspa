@@ -1,0 +1,12 @@
+[build]
+  publish = "./"
+  functions = "functions"
+  command = "echo 'No build command needed'"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/calculate"
+  to = "/.netlify/functions/calculate"
+  status = 200
