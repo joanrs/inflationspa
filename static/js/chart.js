@@ -3,9 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const labels = [];
     const data = [];
 
-    for (const year in inflationData) {
-        for (const month in inflationData[year]) {
-            labels.push(`${year}-${month.padStart(2, '0')}`);
+    // Process years and months in chronological order
+    const years = Object.keys(inflationData).sort(); // Sort years (2020, 2021, ...)
+    for (const year of years) {
+        const months = Object.keys(inflationData[year]).sort(); // Sort months (01, 02, ...)
+        for (const month of months) {
+            labels.push(`${year}-${month}`);
             data.push(inflationData[year][month]);
         }
     }
