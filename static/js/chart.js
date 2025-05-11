@@ -19,18 +19,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: 'IPC (%)',
                 data: data,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                tension: 0.1,
+                pointRadius: 3 // Match results chart for consistent appearance
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: {
-                    suggestedMin: -2, // Slightly below the minimum IPC (-0.9)
-                    suggestedMax: 12, // Slightly above the maximum IPC (10.8)
+                x: {
                     ticks: {
-                        stepSize: 2 // Ticks every 2% for readability
+                        maxRotation: 90,
+                        minRotation: 90
+                    }
+                },
+                y: {
+                    suggestedMin: -2, // Tight fit for min IPC (-0.9)
+                    suggestedMax: 12, // Tight fit for max IPC (10.8)
+                    ticks: {
+                        stepSize: 2 // Consistent with results chart
                     }
                 }
             },
