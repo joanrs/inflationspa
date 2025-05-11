@@ -27,7 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: true
+                    suggestedMin: -2, // Slightly below the minimum IPC (-0.9)
+                    suggestedMax: 12, // Slightly above the maximum IPC (10.8)
+                    ticks: {
+                        stepSize: 2 // Ticks every 2% for readability
+                    }
                 }
             },
             plugins: {
