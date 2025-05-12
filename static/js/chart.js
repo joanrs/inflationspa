@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Fetch inflation data from API
         const response = await fetch('/api/inflation-data');
         if (!response.ok) {
-            throw new Error('Failed to fetch inflation data');
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch inflation data: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
         }
         const inflationData = await response.json();
 
@@ -65,8 +66,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     } catch (error) {
         console.error('Error rendering historical chart:', error);
-        // Optionally display an error message to the user
         const chartContainer = document.querySelector('#ipcChart').parentElement;
-        chartContainer.innerHTML = '<p>Error al cargar los datos del IPC. Por favor, intenta de nuevo más tarde.</p>';
+        chartContainer.innerHTML = '<p class="text-danger">Error al cargar los datos del IPC. Por favor, intenta de nuevo más tarde.</p>';
     }
 });

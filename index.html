@@ -138,7 +138,8 @@
             try {
                 const response = await fetch('/api/inflation-data');
                 if (!response.ok) {
-                    throw new Error('Failed to fetch inflation data');
+                    const errorText = await response.text();
+                    throw new Error(`Failed to fetch inflation data: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
                 }
                 const inflationData = await response.json();
                 
