@@ -105,4 +105,4 @@ const inflationData = {
       "04": 2.2
     }
   };
-  module.exports = { inflation_Data };
+  module.exports = { inflationData };
