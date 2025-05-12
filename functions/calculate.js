@@ -47,7 +47,7 @@ exports.handler = async (event, context) => {
         while (currentDate <= endDate) {
             const year = currentDate.getFullYear().toString();
             const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-            if (inflationData[year] && inflationData[year][month]) {
+            if (inflationData[year] && inflationData[year][month] !== undefined) {
                 ipcData.push({
                     date: `${year}-${month}`,
                     ipc: inflationData[year][month]
