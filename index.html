@@ -189,7 +189,7 @@
             e.preventDefault();
             const formData = new FormData(calcForm);
             const data = {
-                initial_savings: formData.get('initial_savings'),
+                initial_savings: parseFloat(formData.get('initial_savings')),
                 start_month: formData.get('start_month'),
                 start_year: formData.get('start_year'),
                 end_month: formData.get('end_month'),
@@ -197,11 +197,16 @@
             };
 
             try {
-                const response = await fetch('/calculate', {
+                // Temporary workaround: Use direct function path until /calculate redirect is fixed
+                const response = await fetch('/.netlify/functions/calculate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to fetch calculation: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
+                }
                 const result = await response.json();
                 if (response.ok) {
                     document.getElementById('initial_savings_display').textContent = result.initial_savings;
@@ -266,6 +271,7 @@
                     alert(result.error);
                 }
             } catch (error) {
+                console.error('Form submission error:', error);
                 alert('Error: ' + error.message);
             }
         });
