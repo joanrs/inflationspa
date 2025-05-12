@@ -1,4 +1,5 @@
-module.exports = {
+
+const inflationData = {
     "2018": {
       "01": 0.6,
       "02": 1.1,
@@ -104,3 +105,4 @@ module.exports = {
       "04": 2.2
     }
   };
+  module.exports = { inflation_Data };
