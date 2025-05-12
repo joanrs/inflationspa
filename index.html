@@ -14,7 +14,7 @@
 </head>
 <body>
     <div class="container mt-4">
-        <h1 class="mb-4">Calculadora de Inflación 2018-2025. España</h1>
+        <h1 class="mb-4">Calculadora de Inflación - España</h1>
         <p class="mb-4">Esta calculadora utiliza datos reales del IPC (Índice de Precios al Consumo) de España para mostrar el efecto de la inflación en sus ahorros.</p>
 
         <!-- Form Section -->
@@ -44,14 +44,7 @@
                                 <option value="12">12</option>
                             </select>
                             <select class="form-select" id="start_year" name="start_year" required>
-                                <option value="2020">2018</option>
-                                <option value="2020">2019</option>
-                                <option value="2020">2020</option>
-                                <option value="2021">2021</option>
-                                <option value="2022">2022</option>
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
+                                <!-- Populated dynamically -->
                             </select>
                         </div>
                     </div>
@@ -73,14 +66,7 @@
                                 <option value="12">12</option>
                             </select>
                             <select class="form-select" id="end_year" name="end_year" required>
-                                <option value="2020">2018</option>
-                                <option value="2020">2019</option>
-                                <option value="2020">2020</option>
-                                <option value="2021">2021</option>
-                                <option value="2022">2022</option>
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
+                                <!-- Populated dynamically -->
                             </select>
                         </div>
                     </div>
@@ -139,20 +125,6 @@
         <div class="chart-container">
             <canvas id="ipcChart"></canvas>
         </div>
-
-        <!-- Embed Inflation Data -->
-        <script id="inflation-data" type="application/json">
-            {
-                "2018": {"01": 0.6,"02": 1.1,"03": 1.2,"04": 1.1,"05": 2.1,"06": 2.3,"07": 2.2,"08": 2.2,"09": 2.3,"10": 2.3,"11": 1.7,"12": 1.2},
-                "2019": {"01": 1.0,"02": 1.1,"03": 1.3,"04": 1.5,"05": 0.8,"06": 0.4,"07": 0.5,"08": 0.3,"09": 0.1,"10": 0.1,"11": 0.4,"12": 0.8},
-                "2020": {"01": 1.1, "02": 0.7, "03": 0, "04": -0.7, "05": -0.9, "06": -0.3, "07": -0.6, "08": -0.5, "09": -0.4, "10": -0.8, "11": -0.8, "12": -0.5},
-                "2021": {"01": 0.5, "02": 0, "03": 1.3, "04": 2.2, "05": 2.7, "06": 2.7, "07": 2.9, "08": 3.3, "09": 4.0, "10": 5.4, "11": 5.5, "12": 6.5},
-                "2022": {"01": 6.1, "02": 7.6, "03": 9.8, "04": 8.3, "05": 8.7, "06": 10.2, "07": 10.8, "08": 10.5, "09": 8.9, "10": 7.3, "11": 6.8, "12": 5.7},
-                "2023": {"01": 5.9, "02": 6.0, "03": 3.3, "04": 4.1, "05": 3.2, "06": 1.9, "07": 2.3, "08": 2.6, "09": 3.5, "10": 3.5, "11": 3.2, "12": 3.1},
-                "2024": {"01": 2.8, "02": 3.4, "03": 3.2, "04": 3.3, "05": 3.6, "06": 3.4, "07": 2.8, "08": 2.3, "09": 2.4, "10": 1.8, "11": 2.4, "12": 2.8},
-                "2025": {"01": 2.9, "02": 3, "03": 2.3, "04": 2.2}
-            }
-        </script>
     </div>
 
     <script>
@@ -160,8 +132,56 @@
         const resultsSection = document.getElementById('resultsSection');
         const calcForm = document.getElementById('calcForm');
         const recalculateBtn = document.getElementById('recalculate');
+        let resultsChart = null;
 
-        // Toggle between form and results
+        // Populate year selectors dynamically
+        async function populateYearSelectors() {
+            try {
+                const response = await fetch('/api/inflation-data');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch inflation data');
+                }
+                const inflationData = await response.json();
+                
+                // Get sorted years
+                const years = Object.keys(inflationData).sort();
+                
+                // Populate start_year and end_year selectors
+                const startYearSelect = document.getElementById('start_year');
+                const endYearSelect = document.getElementById('end_year');
+                
+                startYearSelect.innerHTML = '';
+                endYearSelect.innerHTML = '';
+                
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    startYearSelect.appendChild(option.cloneNode(true));
+                    endYearSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error populating year selectors:', error);
+                // Fallback: Use hardcoded years
+                const fallbackYears = ['2020', '2021', '2022', '2023', '2024', '2025'];
+                const startYearSelect = document.getElementById('start_year');
+                const endYearSelect = document.getElementById('end_year');
+                
+                fallbackYears.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    startYearSelect.appendChild(option.cloneNode(true));
+                    endYearSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateYearSelectors();
+        });
+
         function showForm() {
             formSection.style.display = 'block';
             resultsSection.style.display = 'none';
@@ -173,7 +193,6 @@
             resultsSection.style.display = 'block';
         }
 
-        // Form submission
         calcForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(calcForm);
@@ -193,7 +212,6 @@
                 });
                 const result = await response.json();
                 if (response.ok) {
-                    // Update results
                     document.getElementById('initial_savings_display').textContent = result.initial_savings;
                     document.getElementById('start_date').textContent = result.start_date;
                     document.getElementById('end_date').textContent = result.end_date;
@@ -202,7 +220,6 @@
                     document.getElementById('ipcOh').textContent = result.ipcOh;
                     document.getElementById('cumulative_ipc').textContent = result.cumulative_ipc;
 
-                    // Update IPC badges
                     const badgesContainer = document.getElementById('ipc_badges');
                     badgesContainer.innerHTML = '';
                     result.ipc_data.forEach(item => {
@@ -212,9 +229,13 @@
                         badgesContainer.appendChild(badge);
                     });
 
-                    // Update results chart
+                    if (resultsChart) {
+                        resultsChart.destroy();
+                        resultsChart = null;
+                    }
+
                     const ctx = document.getElementById('ipcChartResults').getContext('2d');
-                    new Chart(ctx, {
+                    resultsChart = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: result.ipc_data.map(item => item.date),
@@ -257,7 +278,6 @@
             }
         });
 
-        // Recalculate button
         recalculateBtn.addEventListener('click', showForm);
     </script>
 </body>
