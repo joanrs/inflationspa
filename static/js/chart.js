@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-        // Fetch inflation data from API
-        const response = await fetch('/api/inflation-data');
+        // Temporary workaround: Use direct function path until /api/* redirect is fixed
+        const response = await fetch('/.netlify/functions/api_inflation_data');
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`Failed to fetch inflation data: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
