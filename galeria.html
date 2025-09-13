@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería con lightGallery</title>
+
+    <!-- CSS de lightGallery -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lightgallery.min.css" integrity="sha512-F2E+YYE1gkt0T5TVajbHcCSCjscLiloQsYxp4bSqKY72HlJPAZcPldUbgZybbglr5IibhVBAYzuUPiKjdm/lyA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-thumbnail.min.css" integrity="sha512-GRxDpj/bx6/I4y6h2LE5rbGaqRcbTu4dYhaTewlS8Nh9hm/akYprvOTZD7GR+FRCALiKfe8u19ZRdtBwvTMGEA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-zoom.min.css" integrity="sha512-SGo05yQXwPFKXE+GtWCn7J4OZQBaQIakZSxQSqWQT83+CZzaG5F3stK92I3Gj5I0O54l/qLCoIsFqf/G/2+neA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 40px;
+        }
+        #lightgallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        #lightgallery a {
+            display: block;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        #lightgallery a:hover {
+            transform: scale(1.05);
+        }
+        #lightgallery img {
+            display: block;
+            width: 250px;
+            height: 180px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">Mi Galería de Imágenes</h1>
+
+    <!-- Contenedor de la galería -->
+    <div id="lightgallery">
+        <a href="https://picsum.photos/id/1018/1200/800" data-sub-html="<h4>Paisaje de Montaña</h4><p>Una hermosa vista de las montañas al atardecer.</p>">
+            <img src="https://picsum.photos/id/1018/250/180" alt="Paisaje de Montaña">
+        </a>
+        <a href="https://picsum.photos/id/1015/1200/800" data-sub-html="<h4>Río en el Bosque</h4><p>Aguas tranquilas fluyendo a través de un bosque frondoso.</p>">
+            <img src="https://picsum.photos/id/1015/250/180" alt="Río en el Bosque">
+        </a>
+        <a href="https://picsum.photos/id/1025/1200/800" data-sub-html="<h4>Perrito</h4><p>Un adorable Corgi disfrutando del aire libre.</p>">
+            <img src="https://picsum.photos/id/1025/250/180" alt="Perrito Corgi">
+        </a>
+        <a href="https://picsum.photos/id/1040/1200/800" data-sub-html="<h4>Vía del Tren</h4><p>Una vía de tren que se pierde en la niebla del bosque.</p>">
+            <img src="https://picsum.photos/id/1040/250/180" alt="Vía del Tren">
+        </a>
+    </div>
+
+    <!-- JS de lightGallery y sus plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js" integrity="sha512-jEJ0GOU4iuyQLlK5SmnqCwRPlTggI3PCl8lo8O5luroM9K7rQoTdonZCIJvoTqLLA_GPO6M4KpO2A9FGIbo8QA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js" integrity="sha512-VRpF30+he6cfG5229e+pM2PNO2QfMDCTp32+2LgoC28LLK52S+1YdcoG9lD0lqPAc/2aN132y3x16v5f/hO/zQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js" integrity="sha512-BLW2Jrofiqm6m7JhkQDIh2da/3D4yt+9EXBa8k3S5m3i/nN1C09IsoQ52XG3A8T9J3a9p2I2m3G4QWZCg+cag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Script de inicialización -->
+    <script type="text/javascript">
+        lightGallery(document.getElementById('lightgallery'), {
+            plugins: [lgZoom, lgThumbnail],
+            thumbnail: true,
+            speed: 500,
+        });
+    </script>
+
+</body>
+</html>
