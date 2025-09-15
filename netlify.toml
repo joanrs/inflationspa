@@ -16,5 +16,5 @@
 
 [[redirects]]
   from = "/*"
-  to = "/galeria.html"
+  to = "/index.html"
   status = 200

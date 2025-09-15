@@ -3,522 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería con Textos Visibles</title>
-    <style>
-        /* Estilos de lightGallery integrados directamente */
-        .lg-container {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1090;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 0.15s ease 0s;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .lg-container.lg-visible {
-            opacity: 1;
-        }
-        
-        .lg-outer {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            text-align: center;
-        }
-        
-        .lg-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .lg-inner {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .lg-item {
-            display: none !important;
-        }
-        
-        .lg-item.lg-current {
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-        }
-        
-        .lg-image {
-            max-width: 90%;
-            max-height: 80%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        }
-        
-        .lg-sub-html {
-            color: white;
-            text-align: center;
-            margin-top: 20px;
-            max-width: 80%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-        }
-        
-        .lg-sub-html h4 {
-            margin: 0 0 8px 0;
-            font-size: 1.5rem;
-        }
-        
-        .lg-sub-html p {
-            margin: 0;
-            font-size: 1.1rem;
-            line-height: 1.4;
-        }
-        
-        .lg-actions .lg-next, .lg-actions .lg-prev {
-            background-color: rgba(0, 0, 0, 0.45);
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            display: block;
-            font-size: 30px;
-            height: 50px;
-            width: 50px;
-            margin-top: -25px;
-            padding: 0;
-            position: absolute;
-            top: 50%;
-            z-index: 1090;
-            border: none;
-            outline: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background-color 0.3s;
-        }
-        
-        .lg-actions .lg-next:hover, .lg-actions .lg-prev:hover {
-            color: #FFF;
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-        
-        .lg-actions .lg-next {
-            right: 20px;
-        }
-        
-        .lg-actions .lg-prev {
-            left: 20px;
-        }
-        
-        .lg-actions .lg-next:before {
-            content: "›";
-        }
-        
-        .lg-actions .lg-prev:after {
-            content: "‹";
-        }
-        
-        .lg-toolbar {
-            z-index: 1092;
-            left: 0;
-            position: absolute;
-            top: 0;
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .lg-close {
-            background: rgba(0, 0, 0, 0.45);
-            border: none;
-            border-radius: 50%;
-            color: #FFF;
-            cursor: pointer;
-            font-size: 24px;
-            height: 40px;
-            width: 40px;
-            line-height: 40px;
-            outline: none;
-            padding: 0;
-            text-decoration: none;
-            z-index: 1092;
-            opacity: 0.85;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background-color 0.3s;
-        }
-        
-        .lg-close:hover {
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.8);
-        }
-        
-        /* Estilos para la página */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        #lightgallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            justify-content: center;
-            margin-bottom: 40px;
-        }
-        
-        .gallery-item {
-            display: block;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            background: white;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .gallery-item:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
-        }
-        
-        .gallery-item .image-container {
-            position: relative;
-            overflow: hidden;
-            height: 180px;
-        }
-        
-        .gallery-item img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-        
-        .gallery-item .caption {
-            padding: 15px;
-            background: white;
-        }
-        
-        .gallery-item .caption h3 {
-            margin: 0 0 8px 0;
-            color: #2c3e50;
-            font-size: 1.2rem;
-        }
-        
-        .gallery-item .caption p {
-            margin: 0;
-            color: #7f8c8d;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-        
-        .instructions {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 30px auto;
-            max-width: 800px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-left: 5px solid #3498db;
-        }
-        
-        .instructions h2 {
-            color: #2c3e50;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            margin-bottom: 0;
-        }
-        
-        .instructions li {
-            margin-bottom: 12px;
-            line-height: 1.5;
-            color: #34495e;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 768px) {
-            #lightgallery {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                gap: 15px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .instructions {
-                padding: 20px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            #lightgallery {
-                grid-template-columns: 1fr;
-            }
-            
-            body {
-                padding: 15px;
-            }
-        }
-    </style>
+    <title>Calculadora de Inflación - España</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>España Datos Macroeconómicos 2025</h1>
-        
-        
+    <div class="container mt-4">
+        <h1 class="mb-4">Calculadora de Inflación - España (Actualizado a Agosto 2025)</h1>
+        <p class="mb-4">Esta calculadora utiliza datos reales del IPC (Índice de Precios al Consumo) de España para mostrar el efecto de la inflación en sus ahorros.</p>
 
-        <!-- Contenedor de la galería -->
-        <div id="lightgallery">
-            <a href="static/images/inflacion.jpg" class="gallery-item" data-sub-html="<h4>Inflación Agosto 2025.</h4><p>Comparativa Inflación España con Resto de Europa</p>">
-                <div class="image-container">
-                    <img src="static/images/inflacion.jpg" alt="Inflación Agosto 2025">
+        <!-- Form Section -->
+        <div id="formSection">
+            <form id="calcForm">
+                <div class="mb-3">
+                    <label for="initial_savings" class="form-label">Ahorros iniciales €:</label>
+                    <input type="number" class="form-control" id="initial_savings" name="initial_savings" required>
                 </div>
-                <div class="caption">
-                    <h3>Inflación Agosto 2025</h3>
-                    <p>Comparativa Inflación España con Resto de Europa</p>
-                </div>
-            </a>
-            <a href="static/images/paro.jpg" class="gallery-item" data-sub-html="<h4>Tasa de Paro Julio 2025</h4><p>Comparativa Tasa de paro España con Resto de Europa</p>">
-                <div class="image-container">
-                    <img src="static/images/paro.jpg" alt="Tasa de Paro Julio 2025">
-                </div>
-                <div class="caption">
-                    <h3>Tasa de Paro Julio 2025</h3>
-                    <p>Comparativa Tasa de paro España con Resto de Europa</p>
-                </div>
-            </a>
-             <a href="static/images/paroj.jpg" class="gallery-item" data-sub-html="<h4>Tasa de Paro Juvenil Junio 2025</h4><p>Comparativa Tasa de paro España con Resto de Europa</p>">
-                <div class="image-container">
-                    <img src="static/images/paroj.jpg" alt="Tasa de Paro Junio 2025">
-                </div>
-                <div class="caption">
-                    <h3>Tasa de Paro Juvenil Junio 2025</h3>
-                    <p>Comparativa Tasa de paro juvenil España con Resto de Europa</p>
-                </div>
-            </a>
-            
-            <a href="static/images/deuda2024.jpg" class="gallery-item" data-sub-html="<h4>Deuda Pública 2025</h4><p>Comparativa España con Resto de Europa</p>">
-                <div class="image-container">
-                    <img src="static/images/deuda2024.jpg" alt="Deuda Pública 2025">
-                </div>
-                <div class="caption">
-                    <h3>Deuda Pública 2025</h3>
-                    <p>Comparativa España con Resto de Europa</p>
-                </div>
-            </a>
-          
-           <a href="static/images/pib-capìta.png" class="gallery-item" data-sub-html="<h4>PIB per cápita Mayo 2025</h4><p>Comparativa España con Resto de Europa </p>">
-                <div class="image-container">
-                    <img src="static/images/pib-capìta.png" alt="PIB per Capita Mayo 2025">
-                </div>
-                <div class="caption">
-                    <h3>PIB per cápita Mayo 2025</h3>
-                    <p>Comparativa España con Resto de Europa </p>
-                </div>
-            </a>
-        </div>
-        
-        
-        
-        <div class="footer">
-            <a href="index.html" Calculadora Tasa de Paro</a>
-            <p>Calculadora pérdida de poder adquisitivo por la Inflación de España Actualizada Agosto 2025</p>
-        </div>
-   
-    </div>
 
-    <!-- Implementación simplificada de lightGallery -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const galleryItems = document.querySelectorAll('#lightgallery .gallery-item');
-            let currentIndex = 0;
-            let lightbox = null;
-            
-            // Crear lightbox
-            function createLightbox() {
-                lightbox = document.createElement('div');
-                lightbox.className = 'lg-container';
-                lightbox.innerHTML = `
-                    <div class="lg-outer">
-                        <div class="lg-content">
-                            <div class="lg-inner"></div>
-                            <div class="lg-toolbar">
-                                <button type="button" class="lg-close">✕</button>
-                            </div>
-                            <div class="lg-actions">
-                                <button type="button" class="lg-prev"></button>
-                                <button type="button" class="lg-next"></button>
-                            </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="start_month" class="form-label">Fecha de inicio:</label>
+                        <div class="input-group">
+                            <select class="form-select" id="start_month" name="start_month" required>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                            <select class="form-select" id="start_year" name="start_year" required>
+                                <!-- Populated dynamically -->
+                            </select>
                         </div>
                     </div>
-                `;
-                document.body.appendChild(lightbox);
-                
-                // Eventos de cierre
-                lightbox.querySelector('.lg-close').addEventListener('click', closeLightbox);
-                lightbox.addEventListener('click', function(e) {
-                    if (e.target === lightbox) closeLightbox();
-                });
-                
-                // Eventos de navegación
-                lightbox.querySelector('.lg-next').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    navigate(1);
-                });
-                
-                lightbox.querySelector('.lg-prev').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    navigate(-1);
-                });
-                
-                // Eventos de teclado
-                document.addEventListener('keydown', handleKeydown);
-            }
-            
-            // Abrir lightbox
-            function openLightbox(index) {
-                currentIndex = index;
-                if (!lightbox) createLightbox();
-                
-                const inner = lightbox.querySelector('.lg-inner');
-                inner.innerHTML = '';
-                
-                galleryItems.forEach((item, i) => {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.className = `lg-item ${i === index ? 'lg-current' : ''}`;
-                    
-                    const img = document.createElement('img');
-                    img.src = item.href;
-                    img.className = 'lg-image';
-                    img.alt = item.querySelector('img').alt;
-                    
-                    // Crear contenedor para imagen y texto
-                    const contentContainer = document.createElement('div');
-                    contentContainer.style.display = 'flex';
-                    contentContainer.style.flexDirection = 'column';
-                    contentContainer.style.alignItems = 'center';
-                    contentContainer.style.justifyContent = 'center';
-                    
-                    // Añadir imagen
-                    contentContainer.appendChild(img);
-                    
-                    // Añadir texto descriptivo
-                    const subHtml = document.createElement('div');
-                    subHtml.className = 'lg-sub-html';
-                    subHtml.innerHTML = item.getAttribute('data-sub-html');
-                    contentContainer.appendChild(subHtml);
-                    
-                    imgContainer.appendChild(contentContainer);
-                    inner.appendChild(imgContainer);
-                });
-                
-                lightbox.classList.add('lg-visible');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            // Cerrar lightbox
-            function closeLightbox() {
-                if (lightbox) {
-                    lightbox.classList.remove('lg-visible');
-                    document.body.style.overflow = '';
-                    
-                    // Limpiar después de la transición
-                    setTimeout(() => {
-                        if (lightbox && !lightbox.classList.contains('lg-visible')) {
-                            document.body.removeChild(lightbox);
-                            lightbox = null;
-                        }
-                    }, 150);
-                }
-                
-                document.removeEventListener('keydown', handleKeydown);
-            }
-            
-            // Navegar entre imágenes
-            function navigate(direction) {
-                currentIndex = (currentIndex + direction + galleryItems.length) % galleryItems.length;
-                
-                const items = lightbox.querySelectorAll('.lg-item');
-                items.forEach((item, i) => {
-                    item.classList.toggle('lg-current', i === currentIndex);
-                });
-            }
-            
-            // Manejar teclas
-            function handleKeydown(e) {
-                if (e.key === 'Escape') closeLightbox();
-                if (e.key === 'ArrowRight') navigate(1);
-                if (e.key === 'ArrowLeft') navigate(-1);
-            }
-            
-            // Agregar eventos a los elementos de la galería
-            galleryItems.forEach((item, index) => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openLightbox(index);
-                });
-            });
-        });
-    </script>
+                    <div class="col-md-6 mb-3">
+                        <label for="end_month" class="form-label">Fecha de fin:</label>
+                        <div class="input-group">
+                            <select class="form-select" id="end_month" name="end_month" required>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                            <select class="form-select" id="end_year" name="end_year" required>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
+                <button type="submit" class="btn btn-primary">Calcular</button>
+            </form>
+        </div>
+
+        <!-- Results Section (Hidden Initially) -->
+        <div id="resultsSection" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p><strong>Ahorros iniciales:</strong> <span id="initial_savings_display"></span> €</p>
+                    <p><strong>Fecha de inicio:</strong> <span id="start_date"></span></p>
+                    <p><strong>Fecha de fin:</strong> <span id="end_date"></span></p>
+                    <p><strong>Ahorros finales después de la inflación:</strong> <span id="final_savings"></span> €</p>
+                    <p><strong>Pérdida de poder adquisitivo:</strong> <span id="loss"></span> € (<span id="ipcOh"></span>%)</p>
+                    <p><strong>IPC acumulado en el período:</strong> <span id="cumulative_ipc"></span>%</p>
+                </div>
+            </div>
+
+            <h2 class="mb-3">Datos de IPC utilizados:</h2>
+            <div class="card mb-4">
+                <div class="card-body" id="ipc_badges"></div>
+            </div>
+
+            <h2 class="mb-3">Gráfica del IPC en el período seleccionado</h2>
+            <div class="chart-container mb-4">
+                <canvas id="ipcChartResults"></canvas>
+            </div>
+
+            <button id="recalculate" class="btn btn-primary">Volver a calcular</button>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">Fórmula utilizada:</h3>
+                    <p>Para cada mes, aplicamos la siguiente fórmula:</p>
+                    <div class="formula text-center my-3">
+                        \[S_n = \frac{S_{n-1}}{(1 + \frac{i_n}{1200})}\]
+                    </div>
+                    <p>Donde:</p>
+                    <ul class="list-unstyled">
+                        <li>\(S_n\) = Ahorros al final del mes n</li>
+                        <li>\(S_{n-1}\) = Ahorros al inicio del mes n (o final del mes anterior)</li>
+                        <li>\(i_n\) = IPC del mes n %</li>
+                        <li>1200 = Factor de conversión (12 meses * 100 para convertir de porcentaje a decimal)</li>
+                    </ul>
+                    <p>Esta fórmula se aplica de manera iterativa para cada mes del período seleccionado.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historical IPC Chart -->
+        <h2 class="mt-4">Gráfica del IPC en España</h2>
+        <div class="chart-container">
+            <canvas id="ipcChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const formSection = document.getElementById('formSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const calcForm = document.getElementById('calcForm');
+        const recalculateBtn = document.getElementById('recalculate');
+        let resultsChart = null;
+
+        // Populate year selectors dynamically
+        async function populateYearSelectors() {
+            try {
+                // Temporary workaround: Use direct function path until /api/* redirect is fixed
+                const response = await fetch('/.netlify/functions/api_inflation_data');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to fetch inflation data: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
+                }
+                const inflationData = await response.json();
+                
+                // Get sorted years
+                const years = Object.keys(inflationData).sort();
+                
+                // Populate start_year and end_year selectors
+                const startYearSelect = document.getElementById('start_year');
+                const endYearSelect = document.getElementById('end_year');
+                
+                startYearSelect.innerHTML = '';
+                endYearSelect.innerHTML = '';
+                
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    startYearSelect.appendChild(option.cloneNode(true));
+                    endYearSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error populating year selectors:', error);
+                // Fallback: Disable form and show error
+                const formSection = document.getElementById('formSection');
+                formSection.innerHTML = '<p class="text-danger">Error al cargar los datos de años. Por favor, intenta de nuevo más tarde.</p>';
+            }
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateYearSelectors();
+        });
+
+        function showForm() {
+            formSection.style.display = 'block';
+            resultsSection.style.display = 'none';
+            calcForm.reset();
+        }
+
+        function showResults() {
+            formSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+        }
+
+        calcForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(calcForm);
+            const data = {
+                initial_savings: parseFloat(formData.get('initial_savings')),
+                start_month: formData.get('start_month'),
+                start_year: formData.get('start_year'),
+                end_month: formData.get('end_month'),
+                end_year: formData.get('end_year')
+            };
+
+            try {
+                // Temporary workaround: Use direct function path until /calculate redirect is fixed
+                const response = await fetch('/.netlify/functions/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to fetch calculation: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
+                }
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('initial_savings_display').textContent = result.initial_savings;
+                    document.getElementById('start_date').textContent = result.start_date;
+                    document.getElementById('end_date').textContent = result.end_date;
+                    document.getElementById('final_savings').textContent = result.final_savings;
+                    document.getElementById('loss').textContent = result.loss;
+                    document.getElementById('ipcOh').textContent = result.ipcOh;
+                    document.getElementById('cumulative_ipc').textContent = result.cumulative_ipc;
+
+                    const badgesContainer = document.getElementById('ipc_badges');
+                    badgesContainer.innerHTML = '';
+                    result.ipc_data.forEach(item => {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge bg-primary me-2 mb-2';
+                        badge.textContent = `${item.date.slice(-2)}-${item.date.slice(0,4)}: ${item.ipc}%`;
+                        badgesContainer.appendChild(badge);
+                    });
+
+                    if (resultsChart) {
+                        resultsChart.destroy();
+                        resultsChart = null;
+                    }
+
+                    const ctx = document.getElementById('ipcChartResults').getContext('2d');
+                    resultsChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: result.ipc_data.map(item => item.date),
+                            datasets: [{
+                                label: 'IPC (%)',
+                                data: result.ipc_data.map(item => item.ipc),
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        maxRotation: 90,
+                                        minRotation: 90
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: false
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'IPC durante el período seleccionado'
+                                }
+                            }
+                        }
+                    });
+
+                    showResults();
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('Error: ' + error.message);
+            }
+        });
+
+        recalculateBtn.addEventListener('click', showForm);
+    </script>
 </body>
 </html>
