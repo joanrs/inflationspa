@@ -134,15 +134,50 @@
         const recalculateBtn = document.getElementById('recalculate');
         let resultsChart = null;
 
-        // Populate year selectors dynamically
+        
         // Populate year selectors dynamically and set default values
-        async function populateYearSelectors() {
+            async function populateYearSelectors() {
+                try {
+                    const response = await fetch('/.netlify/functions/api_inflation_data');
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Failed to fetch inflation data: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
+                    }
+                    const inflationData = await response.json();
+                    
+                    // Get sorted years
+                    const years = Object.keys(inflationData).sort();
+                    
+                    // Populate start_year and end_year selectors
+                    const startYearSelect = document.getElementById('start_year');
+                    const endYearSelect = document.getElementById('end_year');
+                    
+                    startYearSelect.innerHTML = '';
+                    endYearSelect.innerHTML = '';
+                    
+                    years.forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        startYearSelect.appendChild(option.cloneNode(true));
+                        endYearSelect.appendChild(option);
+                    });
+                    
+                    // Set default values using the new function
+                    await setDefaultDateValues();
+                } catch (error) {
+                    console.error('Error populating year selectors:', error);
+                    const formSection = document.getElementById('formSection');
+                    formSection.innerHTML = '<p class="text-danger">Error al cargar los datos de años. Por favor, intenta de nuevo más tarde.</p>';
+                }
+            }
+
+        // Función para establecer los valores predeterminamos de fecha
+        async function setDefaultDateValues() {
             try {
-                // Temporary workaround: Use direct function path until /api/* redirect is fixed
                 const response = await fetch('/.netlify/functions/api_inflation_data');
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Failed to fetch inflation data: ${response.status} ${response.statusText}\nResponse: ${errorText.slice(0, 100)}...`);
+                    throw new Error('Failed to fetch inflation data');
                 }
                 const inflationData = await response.json();
                 
@@ -152,39 +187,18 @@
                 // Get first and last available dates
                 const firstYear = years[0];
                 const lastYear = years[years.length - 1];
-                const firstMonth = Object.keys(inflationData[firstYear])[0]; // First month of first year
-                const lastMonth = Object.keys(inflationData[lastYear]).pop(); // Last month of last year
-                
-                // Populate start_year and end_year selectors
-                const startYearSelect = document.getElementById('start_year');
-                const endYearSelect = document.getElementById('end_year');
-                const startMonthSelect = document.getElementById('start_month');
-                const endMonthSelect = document.getElementById('end_month');
-                
-                startYearSelect.innerHTML = '';
-                endYearSelect.innerHTML = '';
-                
-                years.forEach(year => {
-                    const option = document.createElement('option');
-                    option.value = year;
-                    option.textContent = year;
-                    startYearSelect.appendChild(option.cloneNode(true));
-                    endYearSelect.appendChild(option);
-                });
+                const firstMonth = Object.keys(inflationData[firstYear])[0];
+                const lastMonth = Object.keys(inflationData[lastYear]).pop();
                 
                 // Set default values
-                startYearSelect.value = firstYear;
-                endYearSelect.value = lastYear;
-                startMonthSelect.value = firstMonth;
-                endMonthSelect.value = lastMonth;
+                document.getElementById('start_year').value = firstYear;
+                document.getElementById('end_year').value = lastYear;
+                document.getElementById('start_month').value = firstMonth;
+                document.getElementById('end_month').value = lastMonth;
             } catch (error) {
-                console.error('Error populating year selectors:', error);
-                // Fallback: Disable form and show error
-                const formSection = document.getElementById('formSection');
-                formSection.innerHTML = '<p class="text-danger">Error al cargar los datos de años. Por favor, intenta de nuevo más tarde.</p>';
+                console.error('Error setting default date values:', error);
             }
         }
-
         
         // Call on page load
         document.addEventListener('DOMContentLoaded', () => {
@@ -195,6 +209,8 @@
             formSection.style.display = 'block';
             resultsSection.style.display = 'none';
             calcForm.reset();
+            // Volver a establecer los valores predeterminamos
+            setDefaultDateValues();
         }
 
         function showResults() {
