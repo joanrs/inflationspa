@@ -135,6 +135,7 @@
         let resultsChart = null;
 
         // Populate year selectors dynamically
+        // Populate year selectors dynamically and set default values
         async function populateYearSelectors() {
             try {
                 // Temporary workaround: Use direct function path until /api/* redirect is fixed
@@ -148,9 +149,17 @@
                 // Get sorted years
                 const years = Object.keys(inflationData).sort();
                 
+                // Get first and last available dates
+                const firstYear = years[0];
+                const lastYear = years[years.length - 1];
+                const firstMonth = Object.keys(inflationData[firstYear])[0]; // First month of first year
+                const lastMonth = Object.keys(inflationData[lastYear]).pop(); // Last month of last year
+                
                 // Populate start_year and end_year selectors
                 const startYearSelect = document.getElementById('start_year');
                 const endYearSelect = document.getElementById('end_year');
+                const startMonthSelect = document.getElementById('start_month');
+                const endMonthSelect = document.getElementById('end_month');
                 
                 startYearSelect.innerHTML = '';
                 endYearSelect.innerHTML = '';
@@ -162,6 +171,12 @@
                     startYearSelect.appendChild(option.cloneNode(true));
                     endYearSelect.appendChild(option);
                 });
+                
+                // Set default values
+                startYearSelect.value = firstYear;
+                endYearSelect.value = lastYear;
+                startMonthSelect.value = firstMonth;
+                endMonthSelect.value = lastMonth;
             } catch (error) {
                 console.error('Error populating year selectors:', error);
                 // Fallback: Disable form and show error
@@ -170,27 +185,11 @@
             }
         }
 
-        // Función para establecer la fecha fin por defecto
-        function setDefaultEndDate() {
-            // Obtener el último año y mes disponible
-            const years = Object.keys(inflationData).sort();
-            const lastYear = years[years.length - 1];
-            const months = Object.keys(inflationData[lastYear]);
-            const lastMonth = months[months.length - 1];
-            
-            // Establecer los valores por defecto
-            document.getElementById('end_month').value = lastMonth;
-            document.getElementById('end_year').value = lastYear;
-        }
-
-        // Llamar a la función cuando se carguen los años
+        
+        // Call on page load
         document.addEventListener('DOMContentLoaded', () => {
-            populateYearSelectors().then(() => {
-                setDefaultEndDate();
-            });
+            populateYearSelectors();
         });
-
-      
 
         function showForm() {
             formSection.style.display = 'block';
