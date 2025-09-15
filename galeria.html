@@ -3,74 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería con lightGallery</title>
-
-    <!-- CSS de lightGallery -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lightgallery.min.css" integrity="sha512-F2E+YYE1gkt0T5TVajbHcCSCjscLiloQsYxp4bSqKY72HlJPAZcPldUbgZybbglr5IibhVBAYzuUPiKjdm/lyA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-thumbnail.min.css" integrity="sha512-GRxDpj/bx6/I4y6h2LE5rbGaqRcbTu4dYhaTewlS8Nh9hm/akYprvOTZD7GR+FRCALiKfe8u19ZRdtBwvTMGEA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-zoom.min.css" integrity="sha512-SGo05yQXwPFKXE+GtWCn7J4OZQBaQIakZSxQSqWQT83+CZzaG5F3stK92I3Gj5I0O54l/qLCoIsFqf/G/2+neA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <title>Galería con Textos Visibles</title>
     <style>
+        /* Estilos de lightGallery integrados directamente */
+        .lg-container {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1090;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.15s ease 0s;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .lg-container.lg-visible {
+            opacity: 1;
+        }
+        
+        .lg-outer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            text-align: center;
+        }
+        
+        .lg-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .lg-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .lg-item {
+            display: none !important;
+        }
+        
+        .lg-item.lg-current {
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+        }
+        
+        .lg-image {
+            max-width: 90%;
+            max-height: 80%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        .lg-sub-html {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            max-width: 80%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+        }
+        
+        .lg-sub-html h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.5rem;
+        }
+        
+        .lg-sub-html p {
+            margin: 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .lg-actions .lg-next, .lg-actions .lg-prev {
+            background-color: rgba(0, 0, 0, 0.45);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: block;
+            font-size: 30px;
+            height: 50px;
+            width: 50px;
+            margin-top: -25px;
+            padding: 0;
+            position: absolute;
+            top: 50%;
+            z-index: 1090;
+            border: none;
+            outline: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .lg-actions .lg-next:hover, .lg-actions .lg-prev:hover {
+            color: #FFF;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .lg-actions .lg-next {
+            right: 20px;
+        }
+        
+        .lg-actions .lg-prev {
+            left: 20px;
+        }
+        
+        .lg-actions .lg-next:before {
+            content: "›";
+        }
+        
+        .lg-actions .lg-prev:after {
+            content: "‹";
+        }
+        
+        .lg-toolbar {
+            z-index: 1092;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .lg-close {
+            background: rgba(0, 0, 0, 0.45);
+            border: none;
+            border-radius: 50%;
+            color: #FFF;
+            cursor: pointer;
+            font-size: 24px;
+            height: 40px;
+            width: 40px;
+            line-height: 40px;
+            outline: none;
+            padding: 0;
+            text-decoration: none;
+            z-index: 1092;
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .lg-close:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        /* Estilos para la página */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
         }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
         #lightgallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
             justify-content: center;
+            margin-bottom: 40px;
         }
-        #lightgallery a {
+        
+        .gallery-item {
             display: block;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease-in-out;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            background: white;
+            text-decoration: none;
+            color: inherit;
         }
-        #lightgallery a:hover {
-            transform: scale(1.05);
+        
+        .gallery-item:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
         }
-        #lightgallery img {
-            display: block;
-            width: 250px;
+        
+        .gallery-item .image-container {
+            position: relative;
+            overflow: hidden;
             height: 180px;
+        }
+        
+        .gallery-item img {
+            display: block;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-item .caption {
+            padding: 15px;
+            background: white;
+        }
+        
+        .gallery-item .caption h3 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+        
+        .gallery-item .caption p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        
+        .instructions {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px auto;
+            max-width: 800px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+        }
+        
+        .instructions h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #34495e;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            #lightgallery {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .instructions {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #lightgallery {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>España Datos Macroeconómicos 2025</h1>
+        
+        
 
-    <h1 style="text-align: center;">Mi Galería de Imágenes</h1>
-
-    <!-- Contenedor de la galería -->
-    <div id="lightgallery">
-        <a href="https://picsum.photos/id/1018/1200/800" data-sub-html="<h4>Paisaje de Montaña</h4><p>Una hermosa vista de las montañas al atardecer.</p>">
-            <img src="https://picsum.photos/id/1018/250/180" alt="Paisaje de Montaña">
-        </a>
-        <a href="https://picsum.photos/id/1015/1200/800" data-sub-html="<h4>Río en el Bosque</h4><p>Aguas tranquilas fluyendo a través de un bosque frondoso.</p>">
-            <img src="https://picsum.photos/id/1015/250/180" alt="Río en el Bosque">
-        </a>
-        <a href="https://picsum.photos/id/1025/1200/800" data-sub-html="<h4>Perrito</h4><p>Un adorable Corgi disfrutando del aire libre.</p>">
-            <img src="https://picsum.photos/id/1025/250/180" alt="Perrito Corgi">
-        </a>
-        <a href="https://picsum.photos/id/1040/1200/800" data-sub-html="<h4>Vía del Tren</h4><p>Una vía de tren que se pierde en la niebla del bosque.</p>">
-            <img src="https://picsum.photos/id/1040/250/180" alt="Vía del Tren">
-        </a>
+        <!-- Contenedor de la galería -->
+        <div id="lightgallery">
+            <a href="static/images/inflacion.jpg" class="gallery-item" data-sub-html="<h4>Inflación Agosto 2025.</h4><p>Comparativa Inflación España con Resto de Europa</p>">
+                <div class="image-container">
+                    <img src="static/images/inflacion.jpg" alt="Inflación Agosto 2025">
+                </div>
+                <div class="caption">
+                    <h3>Inflación Agosto 2025</h3>
+                    <p>Comparativa Inflación España con Resto de Europa</p>
+                </div>
+            </a>
+            <a href="static/images/paro.jpg" class="gallery-item" data-sub-html="<h4>Tasa de Paro Julio 2025</h4><p>Comparativa Tasa de paro España con Resto de Europa</p>">
+                <div class="image-container">
+                    <img src="static/images/paro.jpg" alt="Tasa de Paro Julio 2025">
+                </div>
+                <div class="caption">
+                    <h3>Tasa de Paro Julio 2025</h3>
+                    <p>Comparativa Tasa de paro España con Resto de Europa</p>
+                </div>
+            </a>
+             <a href="static/images/paroj.jpg" class="gallery-item" data-sub-html="<h4>Tasa de Paro Juvenil Junio 2025</h4><p>Comparativa Tasa de paro España con Resto de Europa</p>">
+                <div class="image-container">
+                    <img src="static/images/paroj.jpg" alt="Tasa de Paro Junio 2025">
+                </div>
+                <div class="caption">
+                    <h3>Tasa de Paro Juvenil Junio 2025</h3>
+                    <p>Comparativa Tasa de paro juvenil España con Resto de Europa</p>
+                </div>
+            </a>
+            
+            <a href="static/images/deuda2024.jpg" class="gallery-item" data-sub-html="<h4>Deuda Pública 2025</h4><p>Comparativa España con Resto de Europa</p>">
+                <div class="image-container">
+                    <img src="static/images/deuda2024.jpg" alt="Deuda Pública 2025">
+                </div>
+                <div class="caption">
+                    <h3>Deuda Pública 2025</h3>
+                    <p>Comparativa España con Resto de Europa</p>
+                </div>
+            </a>
+          
+           <a href="static/images/pib-capìta.png" class="gallery-item" data-sub-html="<h4>PIB per cápita Mayo 2025</h4><p>Comparativa España con Resto de Europa </p>">
+                <div class="image-container">
+                    <img src="static/images/pib-capìta.png" alt="PIB per Capita Mayo 2025">
+                </div>
+                <div class="caption">
+                    <h3>PIB per cápita Mayo 2025</h3>
+                    <p>Comparativa España con Resto de Europa </p>
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>Galería de imágenes con textos descriptivos - Haz clic en cualquier imagen para comenzar</p>
+        </div>
     </div>
 
-    <!-- JS de lightGallery y sus plugins -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js" integrity="sha512-jEJ0GOU4iuyQLlK5SmnqCwRPlTggI3PCl8lo8O5luroM9K7rQoTdonZCIJvoTqLLA_GPO6M4KpO2A9FGIbo8QA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js" integrity="sha512-VRpF30+he6cfG5229e+pM2PNO2QfMDCTp32+2LgoC28LLK52S+1YdcoG9lD0lqPAc/2aN132y3x16v5f/hO/zQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js" integrity="sha512-BLW2Jrofiqm6m7JhkQDIh2da/3D4yt+9EXBa8k3S5m3i/nN1C09IsoQ52XG3A8T9J3a9p2I2m3G4QWZCg+cag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <!-- Script de inicialización -->
-    <script type="text/javascript">
-        lightGallery(document.getElementById('lightgallery'), {
-            plugins: [lgZoom, lgThumbnail],
-            thumbnail: true,
-            speed: 500,
+    <!-- Implementación simplificada de lightGallery -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryItems = document.querySelectorAll('#lightgallery .gallery-item');
+            let currentIndex = 0;
+            let lightbox = null;
+            
+            // Crear lightbox
+            function createLightbox() {
+                lightbox = document.createElement('div');
+                lightbox.className = 'lg-container';
+                lightbox.innerHTML = `
+                    <div class="lg-outer">
+                        <div class="lg-content">
+                            <div class="lg-inner"></div>
+                            <div class="lg-toolbar">
+                                <button type="button" class="lg-close">✕</button>
+                            </div>
+                            <div class="lg-actions">
+                                <button type="button" class="lg-prev"></button>
+                                <button type="button" class="lg-next"></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(lightbox);
+                
+                // Eventos de cierre
+                lightbox.querySelector('.lg-close').addEventListener('click', closeLightbox);
+                lightbox.addEventListener('click', function(e) {
+                    if (e.target === lightbox) closeLightbox();
+                });
+                
+                // Eventos de navegación
+                lightbox.querySelector('.lg-next').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navigate(1);
+                });
+                
+                lightbox.querySelector('.lg-prev').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navigate(-1);
+                });
+                
+                // Eventos de teclado
+                document.addEventListener('keydown', handleKeydown);
+            }
+            
+            // Abrir lightbox
+            function openLightbox(index) {
+                currentIndex = index;
+                if (!lightbox) createLightbox();
+                
+                const inner = lightbox.querySelector('.lg-inner');
+                inner.innerHTML = '';
+                
+                galleryItems.forEach((item, i) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = `lg-item ${i === index ? 'lg-current' : ''}`;
+                    
+                    const img = document.createElement('img');
+                    img.src = item.href;
+                    img.className = 'lg-image';
+                    img.alt = item.querySelector('img').alt;
+                    
+                    // Crear contenedor para imagen y texto
+                    const contentContainer = document.createElement('div');
+                    contentContainer.style.display = 'flex';
+                    contentContainer.style.flexDirection = 'column';
+                    contentContainer.style.alignItems = 'center';
+                    contentContainer.style.justifyContent = 'center';
+                    
+                    // Añadir imagen
+                    contentContainer.appendChild(img);
+                    
+                    // Añadir texto descriptivo
+                    const subHtml = document.createElement('div');
+                    subHtml.className = 'lg-sub-html';
+                    subHtml.innerHTML = item.getAttribute('data-sub-html');
+                    contentContainer.appendChild(subHtml);
+                    
+                    imgContainer.appendChild(contentContainer);
+                    inner.appendChild(imgContainer);
+                });
+                
+                lightbox.classList.add('lg-visible');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Cerrar lightbox
+            function closeLightbox() {
+                if (lightbox) {
+                    lightbox.classList.remove('lg-visible');
+                    document.body.style.overflow = '';
+                    
+                    // Limpiar después de la transición
+                    setTimeout(() => {
+                        if (lightbox && !lightbox.classList.contains('lg-visible')) {
+                            document.body.removeChild(lightbox);
+                            lightbox = null;
+                        }
+                    }, 150);
+                }
+                
+                document.removeEventListener('keydown', handleKeydown);
+            }
+            
+            // Navegar entre imágenes
+            function navigate(direction) {
+                currentIndex = (currentIndex + direction + galleryItems.length) % galleryItems.length;
+                
+                const items = lightbox.querySelectorAll('.lg-item');
+                items.forEach((item, i) => {
+                    item.classList.toggle('lg-current', i === currentIndex);
+                });
+            }
+            
+            // Manejar teclas
+            function handleKeydown(e) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') navigate(1);
+                if (e.key === 'ArrowLeft') navigate(-1);
+            }
+            
+            // Agregar eventos a los elementos de la galería
+            galleryItems.forEach((item, index) => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openLightbox(index);
+                });
+            });
         });
     </script>
 
