@@ -170,10 +170,27 @@
             }
         }
 
-        // Call on page load
+        // Función para establecer la fecha fin por defecto
+        function setDefaultEndDate() {
+            // Obtener el último año y mes disponible
+            const years = Object.keys(inflationData).sort();
+            const lastYear = years[years.length - 1];
+            const months = Object.keys(inflationData[lastYear]);
+            const lastMonth = months[months.length - 1];
+            
+            // Establecer los valores por defecto
+            document.getElementById('end_month').value = lastMonth;
+            document.getElementById('end_year').value = lastYear;
+        }
+
+        // Llamar a la función cuando se carguen los años
         document.addEventListener('DOMContentLoaded', () => {
-            populateYearSelectors();
+            populateYearSelectors().then(() => {
+                setDefaultEndDate();
+            });
         });
+
+      
 
         function showForm() {
             formSection.style.display = 'block';
