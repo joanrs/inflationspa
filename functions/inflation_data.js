@@ -111,6 +111,9 @@ const inflationData = {
       "10": 3.1,
       "11": 3,
       "12": 2.9
+    },
+    "2026": {
+      "01": 2.3
     }
   };
   module.exports = { inflationData };
