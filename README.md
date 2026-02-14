@@ -51,6 +51,42 @@ Otras alternativas para servir localmente: `npx http-server .`.
 - Introducir la cantidad inicial y la fecha de inicio (la calculadora usa IPC desde `2018-01` en adelante) y seleccionar la fecha final (hasta el último dato publicado).
 - La calculadora aplica la variación del IPC acumulada para mostrar la pérdida de poder adquisitivo y el valor equivalente ajustado por inflación.
 
+**Fórmula usada en la calculadora (coincidente con `inflacion.html`)**
+
+La calculadora implementada en `inflacion.html` aplica la corrección mes a mes usando la siguiente regla iterativa:
+
+$$S_n = \frac{S_{n-1}}{\left(1 + \dfrac{i_n}{1200}\right)}$$
+
+donde:
+- $S_n$ es el valor de los ahorros al final del mes $n$ (descontando la inflación de ese mes).
+- $S_{n-1}$ es el valor al inicio del mes $n$ (o el final del mes anterior).
+- $i_n$ es la tasa anual del IPC (%) correspondiente al mes $n$ (p. ej. la variación anual en % publicada para ese mes).
+- El divisor $1200$ convierte $i_n$ (porcentaje anual) a un valor mensual en forma decimal: $\frac{i_n}{100}$ es la tasa anual en decimal, dividir entre $12$ da la tasa mensual aproximada, por eso $100*12 = 1200$ en el denominador.
+
+Interpretación y derivación práctica
+- Si el INE proporciona la tasa anual $i_n$ para el mes $n$, esta implementación aproxima la tasa mensual como $r_n \approx i_n / 1200$ (en decimal). Luego se ajusta el saldo dividiéndolo por $1+r_n$ para trasladar el poder adquisitivo al mes siguiente.
+- Aplicando la regla iterativamente para todos los meses del período se obtiene el saldo final real tras descontar inflación mes a mes:
+
+$$S_{final} = S_0 \prod_{n=1}^{N} \frac{1}{1 + i_n/1200}$$
+
+Relación con la conversión por niveles del IPC
+- Si en vez de aplicar tasas mensuales aproximadas se dispone de los niveles del índice (por ejemplo `IPC_t0` y `IPC_t1` como índices absolutos), la conversión exacta entre dos fechas viene dada por la razón de índices:
+
+$$A_{equivalente\;en\;t1} = A \times \frac{IPC_{t1}}{IPC_{t0}}$$
+
+- El método por índices es exactamente correcto siempre que se usen los mismos índices (misma serie y base). La fórmula iterativa usada en la calculadora es una aproximación práctica cuando se trabaja con tasas anuales mensuales publicadas ($i_n$). En muchos casos, para periodos modestos, la aproximación es suficientemente precisa; para mayor exactitud conviene usar niveles de índice si están disponibles.
+
+Ejemplo numérico (coherente con la práctica en la web)
+- Suponiendo $S_0 = 1000\,€$ y aplicando las tasas mensuales derivadas de los $i_n$ publicados, la calculadora computa $S_{final}$ por la fórmula iterativa anterior y obtiene la pérdida como $P = S_0 - S_{final}$.
+
+Limitaciones y recomendaciones
+- La aproximación $i_n/12$ (implícita en `i_n/1200`) presupone una distribución uniforme de la inflación anual en los 12 meses; no es exacta frente a composiciones mensuales reales.
+- Para máxima precisión, si `functions/ipc.json` contiene niveles de índice, la calculadora puede (y se le puede pedir que) emplee la conversión por ratio de índices (`IPC_t0/IPC_t1`) en lugar de la aproximación por tasas.
+- Asegúrate de que la serie usada (nivel geográfico y tipo: `Total Nacional - Índice general`) sea consistente entre `t0` y `t1`.
+
+Se puede adaptar la calculadora para usar directamente niveles de índice (más exacto) en lugar de la aproximación mensual. Esta modificación sería pequeña y mejora la precisión.
+
+
 **Fuentes de datos y actualización**
 - Fuentes primarias: Instituto Nacional de Estadística (INE) u otros repositorios oficiales de estadísticas.
 - Ficheros/servicios relevantes: `functions/inflation_data.js`, `functions/api_inflation_data.js`.
